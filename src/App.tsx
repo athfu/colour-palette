@@ -5,6 +5,10 @@ import WatercolourComponent from "./watercolour.tsx";
 
 const API_BASE_URL = "http://localhost:5001";
 
+interface ColourProps {
+  colour: string;
+}
+
 // const InitColours: string[] = [
 //   "#9300ff",
 //   "#b042ff",
@@ -23,6 +27,45 @@ const InitColours: string[] = [
   "hsl(0,0%,93%)",
 ];
 
+const LoadingSpinner: React.FC<ColourProps> = ({ colour }) => {
+  return (
+    <div className="spinner-container">
+      <div
+        className="loading-spinner"
+        style={{ borderColor: colour, borderBottomColor: "transparent" }}
+      ></div>
+    </div>
+  );
+};
+
+const hexPalette = (paletteColours: string[]) => {
+  return paletteColours.map((stringColour) => {
+    stringColour = stringColour.replace("hsl", "");
+    stringColour = stringColour.replace("(", "");
+    stringColour = stringColour.replace("%", "");
+    stringColour = stringColour.replace(")", "");
+    const colour = stringColour.split(",").map(parseFloat);
+    const hex = HSLToHex(colour);
+    return hex;
+  });
+};
+
+function HSLToHex(hsl: number[]): string {
+  const [h, s, l] = hsl;
+
+  const hDecimal = l / 100;
+  const a = (s * Math.min(hDecimal, 1 - hDecimal)) / 100;
+  const f = (n: number) => {
+    const k = (n + h / 30) % 12;
+    const color = hDecimal - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+
+    return Math.round(255 * color)
+      .toString(16)
+      .padStart(2, "0");
+  };
+  return `#${f(0)}${f(8)}${f(4)}`;
+}
+
 function App() {
   const [prompt, setPrompt] = useState("");
   const [apiResponse, setAPIResponse] = useState("");
@@ -33,7 +76,6 @@ function App() {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key == "Enter") {
       submitPrompt();
-      console.log("prompt submitted");
     }
   };
 
@@ -50,9 +92,7 @@ function App() {
         });
         const data = await response.json();
         // setAPIResponse(data.content);
-        console.log(data.content);
         const newColours = JSON.parse(data.content).colors;
-        console.log(newColours);
         setColours(newColours);
         setLoading(false);
       } catch (error) {
@@ -62,46 +102,9 @@ function App() {
     }
   };
 
-  const hexPalette = (paletteColours: string[]) => {
-    return paletteColours.map((stringColour) => {
-      stringColour = stringColour.replace("hsl", "");
-      stringColour = stringColour.replace("(", "");
-      stringColour = stringColour.replace("%", "");
-      stringColour = stringColour.replace(")", "");
-      const colour = stringColour.split(",").map(parseFloat);
-      const hex = HSLToHex(colour);
-      return hex;
-    });
-  };
-
-  function HSLToHex(hsl: number[]): string {
-    const [h, s, l] = hsl;
-
-    const hDecimal = l / 100;
-    const a = (s * Math.min(hDecimal, 1 - hDecimal)) / 100;
-    const f = (n: number) => {
-      const k = (n + h / 30) % 12;
-      const color = hDecimal - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-
-      // Convert to Hex and prefix with "0" if required
-      return Math.round(255 * color)
-        .toString(16)
-        .padStart(2, "0");
-    };
-    return `#${f(0)}${f(8)}${f(4)}`;
-  }
-
   const handleCopyPalette = async () => {
     await navigator.clipboard.writeText(JSON.stringify(hexPalette(colours)));
     alert("colour palette copied to clipboard");
-  };
-
-  const LoadingSpinner = () => {
-    return (
-      <div className="spinner-container">
-        <div className="loading-spinner"></div>
-      </div>
-    );
   };
 
   useEffect(() => {
@@ -128,7 +131,7 @@ function App() {
             autoComplete="off"
             spellCheck="false"
           ></input>
-          {loading ? <LoadingSpinner /> : null}
+          {loading ? <LoadingSpinner colour={colours[1]} /> : null}
         </div>
       </div>
       <br />
