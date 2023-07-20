@@ -35,7 +35,9 @@ app.post("/palette", async (req: Request, res: Response) => {
       messages: [
         {
           role: "user",
-          content: `Provide six hex codes that best summarize the following text: ${prompt}. Respond with a JSON object {"colors": [#hex1, #hex2, ...]}. ONLY OUTPUT VALID. DO NOT OUPUT ANY TEXT.`,
+          // content: `Provide six hex codes that best summarize the following text: ${prompt}. Respond with a JSON object {"colors": [#hex1, #hex2, ...]}. ONLY OUTPUT VALID. DO NOT OUPUT ANY TEXT.`,
+          content: `Turn the following prompt into a six color palette: "${prompt}". Respond with a JSON object {"colors": ["hsl(275,100%,50%)", "hsl(275,100%,63%)", ...]}. ONLY OUTPUT VALID JSON. DO NOT OUPUT ANY TEXT.`,
+          // content: `Turn the following prompt into a six color palette: "${prompt}". Respond with a JSON object {"colors": ["#hex1", "#hex2", ...]}. ONLY OUTPUT VALID JSON. DO NOT OUPUT ANY TEXT.`,
         },
       ],
     });
