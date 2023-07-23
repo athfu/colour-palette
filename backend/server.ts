@@ -1,15 +1,21 @@
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
+import * as path from "path";
 import { Configuration, OpenAIApi } from "openai";
 import * as dotenv from "dotenv";
 
 dotenv.config();
 
+import * as url from "url";
+const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
+
+const buildPath = path.join(__dirname, "../dist");
 const app: Express = express();
 const port = 5001;
 
-app.use(cors());
+app.use(express.static(buildPath));
 app.use(express.json());
+app.use(cors());
 
 app.listen(port, () => {
   console.log(`server running at http://localhost:${port}`);
@@ -19,6 +25,11 @@ const configuration = new Configuration({
   apiKey: process.env.OPENAI_SECRET_KEY,
 });
 const openai = new OpenAIApi(configuration);
+
+// gets the static files from the build folder
+app.get("*", (req, res) => {
+  res.sendFile(path.join(buildPath, "index.html"));
+});
 
 app.post("/test", (req: Request, res: Response) => {
   const requestData = req.body.prompt;

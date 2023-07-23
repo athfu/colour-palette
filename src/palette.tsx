@@ -4,8 +4,6 @@ interface ColoursProps {
 
 const PaletteComponent: React.FC<ColoursProps> = ({ colours }) => {
   const squareSize = 40;
-  const padding = 10;
-
   return (
     <svg viewBox="0 0 290 50">
       <rect

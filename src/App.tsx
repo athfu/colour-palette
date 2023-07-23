@@ -68,7 +68,6 @@ function HSLToHex(hsl: number[]): string {
 
 function App() {
   const [prompt, setPrompt] = useState("");
-  const [apiResponse, setAPIResponse] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const [colours, setColours] = useState(InitColours);
   const [loading, setLoading] = useState(false);
@@ -134,8 +133,6 @@ function App() {
           {loading ? <LoadingSpinner colour={colours[1]} /> : null}
         </div>
       </div>
-      <br />
-      <div className="apiResponse">{apiResponse}</div>
       <br />
       <div id="palette">{<PaletteComponent colours={colours} />}</div>
       <br />
