@@ -3,7 +3,7 @@ import "./App.css";
 import PaletteComponent from "./palette.tsx";
 import WatercolourComponent from "./watercolour.tsx";
 
-const API_BASE_URL = "http://localhost:5001";
+const API_BASE_URL = "";
 
 interface ColourProps {
   colour: string;
